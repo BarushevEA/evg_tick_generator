@@ -138,4 +138,16 @@ class TickGeneratorUnitTest {
         expect(EState.START).to.be.equal(generator.animationState);
         expect(1).to.be.equal(counter);
     }
+
+    @test 'requestAnimationFrame undefined'(){
+        globalThis.requestAnimationFrame = undefined;
+        const generator = new TickGenerator();
+        expect(EState.UNDEFINED).to.be.equal(generator.animationState);
+
+        generator.stopAnimation();
+        expect(EState.UNDEFINED).to.be.equal(generator.animationState);
+
+        generator.destroy();
+        expect(EState.DESTROY).to.be.equal(generator.animationState);
+    }
 }

@@ -29,6 +29,14 @@ export class TickGenerator implements ITickGenerator {
             this.animationFrameAfter$ = new Observable<EState>(this.animationState),
             this.animationFrameBefore$ = new Observable<EState>(this.animationState),
         );
+
+        try {
+            if (!requestAnimationFrame) {
+                throw new Error("requestAnimationFrame not defined")
+            }
+        } catch (err) {
+            this.animationState$.next(EState.UNDEFINED);
+        }
     }
 
     private start(): void {
@@ -37,18 +45,21 @@ export class TickGenerator implements ITickGenerator {
     }
 
     runAnimation(): void {
-        if (this.state != EState.DESTROY) {
-            this.animationFrameTimer = requestAnimationFrame(this.runAnimation.bind(this));
+        if (this.animationState === EState.UNDEFINED) return;
+        if (this.state === EState.DESTROY) return;
 
-            if (this.animationState !== EState.START) this.animationState$.next(EState.START);
+        this.animationFrameTimer = requestAnimationFrame(this.runAnimation.bind(this));
 
-            this.animationFrameBefore$.next(this.animationState);
-            this.animationFrame$.next(this.animationState);
-            this.animationFrameAfter$.next(this.animationState);
-        }
+        if (this.animationState !== EState.START) this.animationState$.next(EState.START);
+
+        this.animationFrameBefore$.next(this.animationState);
+        this.animationFrame$.next(this.animationState);
+        this.animationFrameAfter$.next(this.animationState);
     }
 
     stopAnimation(): void {
+        if (this.animationState === EState.UNDEFINED) return;
+
         cancelAnimationFrame(this.animationFrameTimer);
         this.animationFrameTimer = 0;
         this.animationState$.next(EState.STOP);

@@ -2,5 +2,6 @@ export enum EState {
     INIT = "INIT",
     START = "START",
     STOP = "STOP",
-    DESTROY = "DESTROY"
+    DESTROY = "DESTROY",
+    UNDEFINED = "UNDEFINED",
 }

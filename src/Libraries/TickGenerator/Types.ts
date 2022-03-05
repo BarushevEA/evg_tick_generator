@@ -26,6 +26,7 @@ export type ITickHandler = {
     interval500Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
     interval1000Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
     intervalCustom(callback: ICallback<any>, delay: milliseconds): ISubscriptionLike<any>;
+    timeout(callback: ICallback<any>, delay: milliseconds): void;
     runTickHandler(): void;
     stopTickHandler(): void;
 }

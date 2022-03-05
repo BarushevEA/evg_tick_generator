@@ -239,7 +239,7 @@ class TickGeneratorUnitTest {
         });
     }
 
-    @test 'intervalCustomMultipleOf10'() {
+    @test 'intervalCustom'() {
         const generator = this.GENERATOR;
         let start = Date.now();
         const subscription = generator.intervalCustom(() => {
@@ -277,5 +277,17 @@ class TickGeneratorUnitTest {
         generator.destroy();
         generator.stopTickHandler();
         expect(EState.DESTROY).to.be.equal(generator.tickHandlerState);
+    }
+
+    @test 'timeout'() {
+        const generator = this.GENERATOR;
+        let start = Date.now();
+         generator.timeout(() => {
+            const stop = Date.now();
+            const delay = stop - start;
+            // console.log("=====================>", delay);
+            expect(true).to.be.equal(delay > 1900 && delay < 2100);
+            generator.destroy();
+        }, 2000);
     }
 }

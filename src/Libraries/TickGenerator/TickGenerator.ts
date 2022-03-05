@@ -199,4 +199,17 @@ export class TickGenerator implements ITickGenerator, IAnimation, ITickHandler {
             }
         });
     }
+
+    timeout(callback: ICallback<any>, delay: milliseconds): void {
+        let counter = delay;
+        let subscription: ISubscriptionLike<any>;
+
+        subscription = this.tick10$.subscribe((state) => {
+            counter -= 10.45;
+            if (counter < 0) {
+                callback(state);
+                subscription.unsubscribe();
+            }
+        });
+    }
 }

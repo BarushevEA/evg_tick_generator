@@ -17,7 +17,6 @@ export class TickGenerator implements ITickGenerator, IAnimation, ITickHandler {
     private tick100$: Observable<EState>;
     private tick500$: Observable<EState>;
     private tick1000$: Observable<EState>;
-    private tickCustom$: Observable<EState>;
     private tickTimer10: any;
     private tickTimer100: any;
     private tickTimer500: any;
@@ -46,7 +45,6 @@ export class TickGenerator implements ITickGenerator, IAnimation, ITickHandler {
             this.tick100$ = new Observable<EState>(this.tickHandlerState),
             this.tick500$ = new Observable<EState>(this.tickHandlerState),
             this.tick1000$ = new Observable<EState>(this.tickHandlerState),
-            this.tickCustom$ = new Observable<EState>(this.tickHandlerState),
         );
 
         try {
@@ -76,6 +74,7 @@ export class TickGenerator implements ITickGenerator, IAnimation, ITickHandler {
 
     destroy(): void {
         this.stopAnimation();
+        this.stopTickHandler();
         this.state$.next(EState.DESTROY);
         this.animationState$.next(EState.DESTROY);
         this.tickHandlerState$.next(EState.DESTROY);
@@ -152,7 +151,7 @@ export class TickGenerator implements ITickGenerator, IAnimation, ITickHandler {
     }
 
     stopTickHandler(): void {
-        if (this.tickHandlerState === EState.DESTROY) return;
+        if (this.state === EState.DESTROY) return;
         if (this.tickHandlerState === EState.STOP) return;
 
         clearInterval(this.tickTimer10);
@@ -192,14 +191,12 @@ export class TickGenerator implements ITickGenerator, IAnimation, ITickHandler {
     intervalCustom(callback: ICallback<any>, delay: milliseconds): ISubscriptionLike<any> {
         let counter = delay;
 
-        this.tick10$.subscribe(() => {
+        return this.tick10$.subscribe((state) => {
             counter -= 10.45;
             if (counter < 0) {
-                this.tickCustom$.next(EState);
+                callback(state);
                 counter = delay;
             }
         });
-
-        return this.tickCustom$.subscribe(callback);
     }
 }

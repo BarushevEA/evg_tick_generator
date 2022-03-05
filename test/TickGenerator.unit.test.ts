@@ -3,7 +3,6 @@ import * as _chai from 'chai';
 import {expect} from 'chai';
 import {TickGenerator} from "../src/Libraries/TickGenerator/TickGenerator";
 import {EState} from "../src/Libraries/TickGenerator/Env";
-import {ICallback} from "evg_observable/src/outLib/Types";
 
 _chai.should();
 _chai.expect;
@@ -23,7 +22,7 @@ class TickGeneratorUnitTest {
 
         // @ts-ignore
         for (const observable of generator.observablesPool) {
-            expect(EState.START).to.be.equal(observable.getValue());
+            expect(false).to.be.equal(observable.isDestroyed);
         }
 
         generator.destroy();
@@ -71,6 +70,15 @@ class TickGeneratorUnitTest {
         generator.stopAnimation();
     }
 
+    @test 'stopAnimationFrame() by destroy'() {
+        const generator = this.GENERATOR;
+
+        generator.destroy();
+        generator.stopAnimation();
+
+        expect(EState.DESTROY).to.be.equal(generator.animationState);
+    }
+
     @test 'animationSubscribe(callback: ICallback<any>)'() {
         const generator = this.GENERATOR;
         let counter = 0;
@@ -98,7 +106,7 @@ class TickGeneratorUnitTest {
         const generator = this.GENERATOR;
         let counterAfter = 0;
         let counterGeneral = 0;
-        const listenerAfter = () => counterAfter = counterAfter+counterGeneral;
+        const listenerAfter = () => counterAfter = counterAfter + counterGeneral;
         const listenerGeneral = () => counterGeneral++;
         generator.stopAnimation();
         generator.animationAfterSubscribe(listenerAfter);
@@ -113,7 +121,7 @@ class TickGeneratorUnitTest {
         generator.stopAnimation();
         expect(EState.STOP).to.be.equal(generator.animationState);
 
-        const listener = (state: EState)=>expect(EState.START).to.be.equal(state);
+        const listener = (state: EState) => expect(EState.START).to.be.equal(state);
         generator.animationStateSubscribe(listener);
         generator.runAnimation();
 
@@ -126,7 +134,7 @@ class TickGeneratorUnitTest {
         generator.stopAnimation();
         expect(EState.STOP).to.be.equal(generator.animationState);
 
-        const listener = (state: EState)=> {
+        const listener = (state: EState) => {
             expect(EState.START).to.be.equal(state);
             counter++;
         }
@@ -139,7 +147,7 @@ class TickGeneratorUnitTest {
         expect(1).to.be.equal(counter);
     }
 
-    @test 'requestAnimationFrame undefined'(){
+    @test 'requestAnimationFrame undefined'() {
         globalThis.requestAnimationFrame = undefined;
         const generator = new TickGenerator();
         expect(EState.UNDEFINED).to.be.equal(generator.animationState);
@@ -149,5 +157,93 @@ class TickGeneratorUnitTest {
 
         generator.destroy();
         expect(EState.DESTROY).to.be.equal(generator.animationState);
+    }
+
+    @test 'stopTickHandler'() {
+        const generator = this.GENERATOR;
+        generator.stopTickHandler();
+        expect(EState.STOP).to.be.equal(generator.tickHandlerState);
+    }
+
+    @test 'interval1000Subscribe'() {
+        const generator = this.GENERATOR;
+        let start = Date.now();
+        generator.interval1000Subscribe(() => {
+            const stop = Date.now();
+            const delay = stop - start;
+            expect(true).to.be.equal(delay > 995 && delay < 1005);
+            generator.stopTickHandler();
+        });
+    }
+
+    @test 'interval500Subscribe'() {
+        const generator = this.GENERATOR;
+        let start = Date.now();
+        generator.interval500Subscribe(() => {
+            const stop = Date.now();
+            const delay = stop - start;
+            expect(true).to.be.equal(delay > 495 && delay < 505);
+            generator.stopTickHandler();
+        });
+    }
+
+    @test 'interval100Subscribe'() {
+        const generator = this.GENERATOR;
+        let start = Date.now();
+        generator.interval100Subscribe(() => {
+            const stop = Date.now();
+            const delay = stop - start;
+            expect(true).to.be.equal(delay > 95 && delay < 105);
+            generator.stopTickHandler();
+        });
+    }
+
+    @test 'interval10Subscribe'() {
+        const generator = this.GENERATOR;
+        let start = Date.now();
+        generator.interval10Subscribe(() => {
+            const stop = Date.now();
+            const delay = stop - start;
+            expect(true).to.be.equal(delay > 5 && delay < 15);
+            generator.stopTickHandler();
+        });
+    }
+
+    @test 'intervalCustomMultipleOf10'() {
+        const generator = this.GENERATOR;
+        let start = Date.now();
+        generator.intervalCustom(() => {
+            const stop = Date.now();
+            const delay = stop - start;
+            // console.log("=====================>", delay);
+            expect(true).to.be.equal(delay > 1960 && delay < 2030);
+            generator.stopTickHandler();
+            start = stop;
+        }, 2000);
+    }
+
+    @test 'runTickHandler by destroy'() {
+        const generator = this.GENERATOR;
+        generator.destroy();
+        generator.runTickHandler();
+        expect(EState.DESTROY).to.be.equal(generator.tickHandlerState);
+    }
+
+    @test 'runTickHandler by start'() {
+        const generator = this.GENERATOR;
+        generator.runTickHandler();
+        generator.runTickHandler();
+        expect(EState.START).to.be.equal(generator.tickHandlerState);
+    }
+
+    @test 'stopTickHandler by DESTROY and STOP'() {
+        const generator = this.GENERATOR;
+        generator.stopTickHandler();
+        generator.stopTickHandler();
+        expect(EState.STOP).to.be.equal(generator.tickHandlerState);
+
+        generator.destroy();
+        generator.stopTickHandler();
+        expect(EState.DESTROY).to.be.equal(generator.tickHandlerState);
     }
 }

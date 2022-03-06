@@ -97,3 +97,7 @@ generator.timeout(() => {
 | `.timeout(callback: ICallback<any>, delay: milliseconds)` | ISubscriptionLike<any> | will generate one tick by custom delay                |
 | `.runTickHandler()` | void | will run time ticks                                   |
 | `.stopTickHandler()` | void | will stop all time ticks                              |
+
+## License
+
+MIT

@@ -4,4 +4,5 @@ export enum EState {
     STOP = "STOP",
     DESTROY = "DESTROY",
     UNDEFINED = "UNDEFINED",
+    PROCESS = "PROCESS",
 }

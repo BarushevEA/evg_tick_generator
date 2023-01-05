@@ -1,32 +1,29 @@
 import {EState} from "./Env";
-import {ICallback, ISubscriptionLike} from "evg_observable/src/outLib/Types";
+import {IListener, ISubscriptionLike} from "evg_observable/src/outLib/Types";
 
-export type milliseconds = number;
+export type ms = number;
+export type ITickCallback<T> = (state: T) => void;
 
-export type ITickGenerator = {
-    state: EState;
-    stateSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
+export type ITick = {
+    subscribeBeforeTick(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
+    subscribeTick(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
+    subscribeAfterTick(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
+};
+
+export type ISensor = {
+    detect(): void;
+};
+
+export type ILifeCircle = {
+    start(): void;
+    stop(): void;
     destroy(): void;
 }
 
-export type IAnimation = {
-    animationState: EState;
-    animationSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    animationBeforeSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    animationAfterSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    animationStateSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    runAnimation(): void;
-    stopAnimation(): void;
-}
+export type ITimeout = {
+    setTickTime(time: ms): void;
+};
 
-export type ITickHandler = {
-    tickHandlerState: EState;
-    interval10Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    interval100Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    interval500Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    interval1000Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    intervalCustom(callback: ICallback<any>, delay: milliseconds): ISubscriptionLike<any>;
-    timeout(callback: ICallback<any>, delay: milliseconds): void;
-    runTickHandler(): void;
-    stopTickHandler(): void;
-}
+export type IInterval = {
+    setTickInterval(time: ms): void;
+};

@@ -2,8 +2,12 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2017",
-    "lib": [ "es2015" , "dom"],
+    "lib": [
+      "es2015",
+      "dom"
+    ],
     "outDir": "./src/outLib/",
+    "strict": true,
     "sourceMap": false
   },
   "exclude": [

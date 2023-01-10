@@ -1,19 +1,19 @@
-import {ILifeCircle, ISensor, ITick} from "./Types";
+import {ILifeCircle, ISensor, IReaction} from "./Types";
 import {ICollector, IListener, IObserver, ISubscriptionLike} from "evg_observable/src/outLib/Types";
 import {EState} from "./Env";
 import {Collector} from "evg_observable/src/outLib/Collector";
 import {Observable} from "evg_observable/src/outLib/Observable";
 
-export class Sensor implements ILifeCircle, ISensor, ITick {
-    public collector: ICollector;
-    private $beforeTickObservable: IObserver<EState>;
-    private $tickObservable: IObserver<EState>;
-    private $afterTickObservable: IObserver<EState>;
+export class Sensor implements ILifeCircle, ISensor, IReaction {
+    private readonly _collector: ICollector;
+    private readonly $beforeTickObservable: IObserver<EState>;
+    private readonly $tickObservable: IObserver<EState>;
+    private readonly $afterTickObservable: IObserver<EState>;
     private state: EState;
 
     constructor() {
         this.state = EState.INIT;
-        this.collector = new Collector();
+        this._collector = new Collector();
         this.$beforeTickObservable = new Observable(this.state);
         this.$tickObservable = new Observable(this.state);
         this.$afterTickObservable = new Observable(this.state);
@@ -34,7 +34,7 @@ export class Sensor implements ILifeCircle, ISensor, ITick {
 
     destroy(): void {
         if (this.state === EState.DESTROY) return;
-        this.collector.destroy();
+        this._collector.destroy();
         this.$beforeTickObservable.destroy();
         this.$tickObservable.destroy();
         this.$afterTickObservable.destroy();
@@ -52,30 +52,34 @@ export class Sensor implements ILifeCircle, ISensor, ITick {
         this.state = EState.PROCESS;
     }
 
-    subscribeBeforeTick(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
+    subscribeBefore(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
         if (this.state === EState.DESTROY) return;
         if (!callback) return;
 
         const subscriber = this.$beforeTickObservable.subscribe(callback);
-        subscriber && this.collector.collect(<any>subscriber);
+        subscriber && this._collector.collect(<any>subscriber);
         return subscriber;
     }
 
-    subscribeTick(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
+    subscribeMain(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
         if (this.state === EState.DESTROY) return;
         if (!callback) return;
 
         const subscriber = this.$tickObservable.subscribe(callback);
-        subscriber && this.collector.collect(<any>subscriber);
+        subscriber && this._collector.collect(<any>subscriber);
         return subscriber;
     }
 
-    subscribeAfterTick(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
+    subscribeAfter(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
         if (this.state === EState.DESTROY) return;
         if (!callback) return;
 
         const subscriber = this.$afterTickObservable.subscribe(callback);
-        subscriber && this.collector.collect(<any>subscriber);
+        subscriber && this._collector.collect(<any>subscriber);
         return subscriber;
+    }
+
+    get collector(): ICollector {
+        return this._collector;
     }
 }

@@ -5,4 +5,5 @@ export enum EState {
     STOP,
     DESTROY,
     PROCESS,
+    READY
 }

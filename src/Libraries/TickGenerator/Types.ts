@@ -6,7 +6,7 @@ export type ITickCallback<T> = (state: T) => void;
 
 export type IReaction = {
     subscribeBefore(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
-    subscribeMain(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
+    subscribe(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
     subscribeAfter(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
 };
 

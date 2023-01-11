@@ -1,7 +1,7 @@
 import {suite, test} from '@testdeck/mocha';
 import * as _chai from 'chai';
 import {expect} from 'chai';
-import {TickGenerator} from "../src/Libraries/TickGenerator/TickGenerator";
+import {ReactionTimer} from "../src/Libraries/TickGenerator/ReactionTimer";
 import {EState} from "../src/Libraries/TickGenerator/Env";
 import {ISubscriptionLike} from "evg_observable/src/outLib/Types";
 
@@ -10,12 +10,12 @@ _chai.expect;
 
 @suite
 class TickGeneratorUnitTest {
-    private GENERATOR: TickGenerator
+    private GENERATOR: ReactionTimer
 
     before() {
         globalThis.requestAnimationFrame = (fn: Function) => 10;
         globalThis.cancelAnimationFrame = (timer: number) => true;
-        this.GENERATOR = new TickGenerator();
+        this.GENERATOR = new ReactionTimer();
     }
 
     @test 'is created'() {
@@ -177,7 +177,7 @@ class TickGeneratorUnitTest {
 
     @test 'requestAnimationFrame undefined'() {
         globalThis.requestAnimationFrame = undefined;
-        const generator = new TickGenerator();
+        const generator = new ReactionTimer();
         expect(EState.UNDEFINED).to.be.equal(generator.animationState);
 
         generator.stopAnimation();

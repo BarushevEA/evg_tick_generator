@@ -2,12 +2,19 @@ import {EState} from "./Env";
 import {IListener, ISubscriptionLike} from "evg_observable/src/outLib/Types";
 
 export type ms = number;
-export type ITickCallback<T> = (state: T) => void;
 
-export type IReaction = {
+export type IBefore = {
     subscribeBefore(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
-    subscribe(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
+}
+
+export type IAfter = {
     subscribeAfter(callback: IListener<EState>): ISubscriptionLike<EState> | undefined;
+}
+
+export type IListenerWrapper = IBefore & IAfter & ISubscriptionLike<EState>;
+
+export type ISubscription = {
+    subscribe(callback: IListener<EState>): IListenerWrapper | undefined;
 };
 
 export type ISensor = {

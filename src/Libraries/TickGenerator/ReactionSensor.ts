@@ -1,22 +1,19 @@
-import {ILifeCircle, IReaction, ISensor} from "./Types";
-import {ICollector, IListener, IObserver, ISubscriptionLike} from "evg_observable/src/outLib/Types";
+import {ILifeCircle, ISensor, ISubscription, IListenerWrapper} from "./Types";
+import {ICollector, IListener, IObserver} from "evg_observable/src/outLib/Types";
 import {EState} from "./Env";
 import {Collector} from "evg_observable/src/outLib/Collector";
 import {Observable} from "evg_observable/src/outLib/Observable";
+import {ListenerWrapper} from "./ListenerWrapper";
 
-export class ReactionSensor implements ILifeCircle, IReaction, ISensor {
+export class ReactionSensor implements ILifeCircle, ISubscription, ISensor {
     private _collector: ICollector;
-    private $before: IObserver<EState>;
     private $main: IObserver<EState>;
-    private $after: IObserver<EState>;
     private _state: EState;
 
     constructor() {
         this._state = EState.INIT;
         this._collector = new Collector();
-        this.$before = new Observable(this._state);
         this.$main = new Observable(this._state);
-        this.$after = new Observable(this._state);
     }
 
     start(): void {
@@ -37,52 +34,29 @@ export class ReactionSensor implements ILifeCircle, IReaction, ISensor {
         this._state = EState.DESTROY;
 
         this._collector.destroy();
-        this.$before.destroy();
         this.$main.destroy();
-        this.$after.destroy();
 
         this._collector = <any>0;
-        this.$before = <any>0;
         this.$main = <any>0;
-        this.$after = <any>0;
     }
 
     detect(): void {
         if (this._state === EState.DESTROY) return;
         if (this._state === EState.STOP) return;
 
-        this.$before.next(this._state);
         this.$main.next(this._state);
-        this.$after.next(this._state);
 
         this._state = EState.PROCESS;
     }
 
-    subscribeBefore(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
+    subscribe(callback: IListener<EState>): IListenerWrapper | undefined {
         if (this._state === EState.DESTROY) return;
         if (!callback) return;
 
-        const subscriber = this.$before.subscribe(callback);
-        subscriber && this._collector.collect(<any>subscriber);
-        return subscriber;
-    }
+        const wrapper = new ListenerWrapper(this.$main, callback);
+        this._collector.collect(wrapper);
 
-    subscribe(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
-        if (this._state === EState.DESTROY) return;
-        if (!callback) return;
-
-        const subscriber = this.$main.subscribe(callback);
-        subscriber && this._collector.collect(<any>subscriber);
-        return subscriber;
-    }
-
-    subscribeAfter(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
-        if (this._state === EState.DESTROY) return;
-        if (!callback) return;
-
-        const subscriber = this.$after.subscribe(callback);
-        subscriber && this._collector.collect(<any>subscriber);
-        return subscriber;
+        return wrapper;
     }
 
     get collector(): ICollector | undefined {

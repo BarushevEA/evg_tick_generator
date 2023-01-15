@@ -1,9 +1,9 @@
-import {ILifeCircle, IReaction, ITimeout, ms} from "./Types";
+import {ILifeCircle, IListenerWrapper, ISubscription, ITimeout, ms} from "./Types";
 import {EState} from "./Env";
 import {ReactionSensor} from "./ReactionSensor";
-import {ICollector, IListener, ISubscriptionLike} from "evg_observable/src/outLib/Types";
+import {ICollector, IListener} from "evg_observable/src/outLib/Types";
 
-export class ReactionTimer implements ILifeCircle, IReaction, ITimeout {
+export class ReactionTimer implements ILifeCircle, ISubscription, ITimeout {
     private _state: EState;
     private reaction: ReactionSensor;
     private time: ms;
@@ -24,9 +24,9 @@ export class ReactionTimer implements ILifeCircle, IReaction, ITimeout {
         this.reaction.start();
 
         this.timerId = setTimeout(() => {
-            this._state = EState.PROCESS
+            this._state = EState.PROCESS;
             this.reaction.detect();
-            this._state = EState.READY
+            this._state = EState.READY;
         }, this.time);
     }
 
@@ -56,22 +56,10 @@ export class ReactionTimer implements ILifeCircle, IReaction, ITimeout {
         this.time = time;
     }
 
-    subscribeBefore(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
-        if (this._state === EState.DESTROY) return;
-
-        return this.reaction.subscribeBefore(callback);
-    }
-
-    subscribe(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
+    subscribe(callback: IListener<EState>): IListenerWrapper | undefined {
         if (this._state === EState.DESTROY) return;
 
         return this.reaction.subscribe(callback);
-    }
-
-    subscribeAfter(callback: IListener<EState>): ISubscriptionLike<EState> | undefined {
-        if (this._state === EState.DESTROY) return;
-
-        return this.reaction.subscribeAfter(callback);
     }
 
     get collector(): ICollector | undefined {

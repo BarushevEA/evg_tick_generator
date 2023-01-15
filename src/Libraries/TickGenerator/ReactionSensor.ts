@@ -1,4 +1,4 @@
-import {ILifeCircle, ISensor, ISubscription, IListenerWrapper} from "./Types";
+import {ILifeCircle, IListenerWrapper, ISensor, ISubscription} from "./Types";
 import {ICollector, IListener, IObserver} from "evg_observable/src/outLib/Types";
 import {EState} from "./Env";
 import {Collector} from "evg_observable/src/outLib/Collector";
@@ -53,10 +53,7 @@ export class ReactionSensor implements ILifeCircle, ISubscription, ISensor {
         if (this._state === EState.DESTROY) return;
         if (!callback) return;
 
-        const wrapper = new ListenerWrapper(this.$main, callback);
-        this._collector.collect(wrapper);
-
-        return wrapper;
+        return new ListenerWrapper(this.$main, callback, this._collector);
     }
 
     get collector(): ICollector | undefined {

@@ -16,7 +16,7 @@
     "url": "git+https://github.com/BarushevEA/light-observable-ts.git"
   },
   "author": "Barushev E.A.",
-  "license": "LICENSE",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/BarushevEA/evg_tick_generator/issues"
   },

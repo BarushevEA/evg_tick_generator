@@ -16,8 +16,9 @@ export class GAnimationFrame implements IGenerator, IRequestAnimationFrame {
     }
 
     setFPS(num: number): Status {
+        const state = this.state;
         if (this.isDestroyed()) return getNegativeStatus(EState.DESTROYED);
-
+        if (state === EState.STARTED) return getNegativeStatus(state);
         if (num < 1) return getNegativeStatus(ERROR.ERROR_NEGATIVE_DELAY);
 
         this.fps = num;

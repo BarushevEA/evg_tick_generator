@@ -24,11 +24,13 @@
   "devDependencies": {
     "typescript": "^5.4.2",
     "@testdeck/mocha": "^0.3.3",
+    "@types/mocha": "^10.0.6",
     "@types/chai": "^4.3.4",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "sinon": "^17.0.1"
   },
   "dependencies": {
     "evg_observable": "^1.5.43"

@@ -8,7 +8,8 @@
     "sourceMap": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["mocha", "node"]
   },
   "exclude": [
     "node_modules",

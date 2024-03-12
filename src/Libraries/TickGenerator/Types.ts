@@ -1,32 +1,33 @@
-import {EState} from "./Env";
+import {ERROR, EState} from "./Env";
 import {ICallback, ISubscriptionLike} from "evg_observable/src/outLib/Types";
 
 export type milliseconds = number;
 
-export type ITickGenerator = {
+export type Status = {
+    isApplied: boolean;
+    state: EState | ERROR;
+};
+
+export type IGenerator = {
     state: EState;
-    stateSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    destroy(): void;
-}
+    subscribeOnState(callback: ICallback<EState>): ISubscriptionLike | undefined;
+    subscribeOnProcess(callback: ICallback<EState>): ISubscriptionLike | undefined;
+    start(): Status;
+    stop(): Status;
+    destroy(): Status;
+};
 
-export type IAnimation = {
-    animationState: EState;
-    animationSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    animationBeforeSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    animationAfterSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    animationStateSubscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    runAnimation(): void;
-    stopAnimation(): void;
-}
+export type ITimeout = {
+    setTimeout(delay: milliseconds): Status;
+};
 
-export type ITickHandler = {
-    tickHandlerState: EState;
-    interval10Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    interval100Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    interval500Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    interval1000Subscribe(callback: ICallback<any>): ISubscriptionLike<any>;
-    intervalCustom(callback: ICallback<any>, delay: milliseconds): ISubscriptionLike<any>;
-    timeout(callback: ICallback<any>, delay: milliseconds): void;
-    runTickHandler(): void;
-    stopTickHandler(): void;
-}
+export type IRInterval = {
+    setInterval(delay: milliseconds): Status;
+};
+
+export type IRequestAnimationFrame = {
+    setFPS(num: number): Status;
+    set60fps(): Status;
+    set30fps(): Status;
+    setDefault(): Status;
+};

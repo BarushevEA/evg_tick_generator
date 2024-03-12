@@ -33,11 +33,11 @@ class TickGeneratorUnitTest {
         const generator = this.GENERATOR;
 
         generator.stateSubscribe((state: EState) => {
-            expect(EState.DESTROY).to.be.equal(state);
+            expect(EState.DESTROYED).to.be.equal(state);
         })
 
         generator.destroy();
-        expect(EState.DESTROY).to.be.equal(generator.state);
+        expect(EState.DESTROYED).to.be.equal(generator.state);
     }
 
     @test 'runAnimation()'() {
@@ -46,7 +46,7 @@ class TickGeneratorUnitTest {
 
         generator.stopAnimation();
         subscription1 = generator.animationStateSubscribe((state: EState) => {
-            expect(EState.START).to.be.equal(state);
+            expect(EState.STARTED).to.be.equal(state);
             subscription1.unsubscribe();
             generator.destroy();
         });
@@ -57,11 +57,11 @@ class TickGeneratorUnitTest {
     @test 'runAnimation() after destroy'() {
         const generator = this.GENERATOR;
         generator.destroy();
-        generator.animationStateSubscribe(() => expect(EState.DESTROY).to.be.equal(EState.START));
+        generator.animationStateSubscribe(() => expect(EState.DESTROYED).to.be.equal(EState.STARTED));
         generator.runAnimation()
 
-        expect(EState.DESTROY).to.be.equal(generator.state);
-        expect(EState.DESTROY).to.be.equal(generator.animationState);
+        expect(EState.DESTROYED).to.be.equal(generator.state);
+        expect(EState.DESTROYED).to.be.equal(generator.animationState);
     }
 
     @test 'stopAnimationFrame()'() {
@@ -69,7 +69,7 @@ class TickGeneratorUnitTest {
         let subscription1: ISubscriptionLike<any>;
 
         subscription1 = generator.animationStateSubscribe((state: EState) => {
-            expect(EState.STOP).to.be.equal(state);
+            expect(EState.STOPPED).to.be.equal(state);
             subscription1.unsubscribe();
             generator.destroy();
         })
@@ -83,7 +83,7 @@ class TickGeneratorUnitTest {
         generator.destroy();
         generator.stopAnimation();
 
-        expect(EState.DESTROY).to.be.equal(generator.animationState);
+        expect(EState.DESTROYED).to.be.equal(generator.animationState);
     }
 
     @test 'animationSubscribe(callback: ICallback<any>)'() {
@@ -139,17 +139,17 @@ class TickGeneratorUnitTest {
     @test 'animationStateSubscribe(callback: ICallback<any>) on start'() {
         const generator = this.GENERATOR;
         generator.stopAnimation();
-        expect(EState.STOP).to.be.equal(generator.animationState);
+        expect(EState.STOPPED).to.be.equal(generator.animationState);
 
         let subscription: ISubscriptionLike<any>;
         const listener = (state: EState) => {
-            expect(EState.START).to.be.equal(state);
+            expect(EState.STARTED).to.be.equal(state);
             subscription.unsubscribe();
         };
         subscription = generator.animationStateSubscribe(listener);
         generator.runAnimation();
 
-        expect(EState.START).to.be.equal(generator.animationState);
+        expect(EState.STARTED).to.be.equal(generator.animationState);
         generator.destroy();
     }
 
@@ -157,11 +157,11 @@ class TickGeneratorUnitTest {
         const generator = this.GENERATOR;
         let counter = 0;
         generator.stopAnimation();
-        expect(EState.STOP).to.be.equal(generator.animationState);
+        expect(EState.STOPPED).to.be.equal(generator.animationState);
 
         let subscription: ISubscriptionLike<any>;
         const listener = (state: EState) => {
-            expect(EState.START).to.be.equal(state);
+            expect(EState.STARTED).to.be.equal(state);
             counter++;
         }
         subscription = generator.animationStateSubscribe(listener);
@@ -169,7 +169,7 @@ class TickGeneratorUnitTest {
         generator.runAnimation();
         generator.runAnimation();
 
-        expect(EState.START).to.be.equal(generator.animationState);
+        expect(EState.STARTED).to.be.equal(generator.animationState);
         expect(1).to.be.equal(counter);
         subscription.unsubscribe();
         generator.destroy();
@@ -184,14 +184,14 @@ class TickGeneratorUnitTest {
         expect(EState.UNDEFINED).to.be.equal(generator.animationState);
 
         generator.destroy();
-        expect(EState.DESTROY).to.be.equal(generator.animationState);
+        expect(EState.DESTROYED).to.be.equal(generator.animationState);
         this.GENERATOR.destroy();
     }
 
     @test 'stopTickHandler'() {
         const generator = this.GENERATOR;
         generator.stopTickHandler();
-        expect(EState.STOP).to.be.equal(generator.tickHandlerState);
+        expect(EState.STOPPED).to.be.equal(generator.tickHandlerState);
         generator.destroy();
     }
 
@@ -257,14 +257,14 @@ class TickGeneratorUnitTest {
         const generator = this.GENERATOR;
         generator.destroy();
         generator.runTickHandler();
-        expect(EState.DESTROY).to.be.equal(generator.tickHandlerState);
+        expect(EState.DESTROYED).to.be.equal(generator.tickHandlerState);
     }
 
     @test 'runTickHandler by start'() {
         const generator = this.GENERATOR;
         generator.runTickHandler();
         generator.runTickHandler();
-        expect(EState.START).to.be.equal(generator.tickHandlerState);
+        expect(EState.STARTED).to.be.equal(generator.tickHandlerState);
         generator.destroy();
     }
 
@@ -272,11 +272,11 @@ class TickGeneratorUnitTest {
         const generator = this.GENERATOR;
         generator.stopTickHandler();
         generator.stopTickHandler();
-        expect(EState.STOP).to.be.equal(generator.tickHandlerState);
+        expect(EState.STOPPED).to.be.equal(generator.tickHandlerState);
 
         generator.destroy();
         generator.stopTickHandler();
-        expect(EState.DESTROY).to.be.equal(generator.tickHandlerState);
+        expect(EState.DESTROYED).to.be.equal(generator.tickHandlerState);
     }
 
     @test 'timeout'() {

@@ -15,10 +15,6 @@ export class GAnimationFrame implements IGenerator, IRequestAnimationFrame {
         return state ?? EState.UNDEFINED;
     }
 
-    isDestroyed(): boolean {
-        return this.state === EState.DESTROYED;
-    }
-
     setFPS(num: number): Status {
         if (this.isDestroyed()) return getNegativeStatus(EState.DESTROYED);
 
@@ -89,9 +85,12 @@ export class GAnimationFrame implements IGenerator, IRequestAnimationFrame {
     }
 
     subscribeOnProcess(callback: ICallback<EState>): ISubscriptionLike | undefined {
-        const state = this.state;
-        if (state === EState.DESTROYED) return undefined;
+        if (this.isDestroyed()) return undefined;
 
         return this.state$.pipe()?.emitByPositive(state => state === EState.PROCESS).subscribe(callback);
+    }
+
+    isDestroyed(): boolean {
+        return this.state === EState.DESTROYED;
     }
 }

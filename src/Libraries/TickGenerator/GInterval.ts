@@ -15,10 +15,6 @@ export class GInterval implements IGenerator, IRInterval {
         return state ?? EState.UNDEFINED;
     }
 
-    isDestroyed(): boolean {
-        return this.state === EState.DESTROYED;
-    }
-
     setInterval(delay: milliseconds): Status {
         const state = this.state;
         if (this.isDestroyed()) return getNegativeStatus(EState.DESTROYED);
@@ -62,9 +58,12 @@ export class GInterval implements IGenerator, IRInterval {
     }
 
     subscribeOnProcess(callback: ICallback<EState>): ISubscriptionLike | undefined {
-        const state = this.state;
-        if (state === EState.DESTROYED) return undefined;
+        if (this.isDestroyed()) return undefined;
 
         return this.state$.pipe()?.emitByPositive(state => state === EState.PROCESS).subscribe(callback);
+    }
+
+    isDestroyed(): boolean {
+        return this.state === EState.DESTROYED;
     }
 }

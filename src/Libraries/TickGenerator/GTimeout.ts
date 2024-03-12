@@ -61,13 +61,12 @@ export class GTimeout implements IGenerator, ITimeout {
     }
 
     subscribeOnProcess(callback: ICallback<EState>): ISubscriptionLike | undefined {
-        const state = this.state;
-        if (state === EState.DESTROYED) return undefined;
+        if (this.isDestroyed()) return undefined;
 
         return this.state$.pipe()?.emitByPositive(state => state === EState.PROCESS).subscribe(callback);
     }
 
-    private isDestroyed(): boolean {
+    isDestroyed(): boolean {
         return this.state === EState.DESTROYED;
     }
 }

@@ -16,6 +16,7 @@ export class GTimeout implements IGenerator, ITimeout {
     }
 
     destroy(): Status {
+        this.stop();
         this.state$.next(EState.DESTROYED);
         this.state$.destroy();
         return getPositiveStatus(EState.DESTROYED);

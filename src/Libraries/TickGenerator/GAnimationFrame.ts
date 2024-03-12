@@ -72,6 +72,7 @@ export class GAnimationFrame implements IGenerator, IRequestAnimationFrame {
     }
 
     destroy(): Status {
+        this.stop();
         this.state$.next(EState.DESTROYED);
         this.state$.destroy();
 

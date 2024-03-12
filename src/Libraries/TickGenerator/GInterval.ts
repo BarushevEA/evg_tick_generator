@@ -46,6 +46,7 @@ export class GInterval implements IGenerator, IRInterval {
     }
 
     destroy(): Status {
+        this.stop();
         this.state$.next(EState.DESTROYED);
         this.state$.destroy();
         return getPositiveStatus(EState.DESTROYED);

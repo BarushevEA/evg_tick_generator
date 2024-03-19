@@ -14,7 +14,7 @@ EVG Tick Generator - is a light library for simple use.
 
 ### Browser
 ```html
-<script src="https://unpkg.com/evg_observable/repo/tgr_min.js"></script>
+<script src="https://unpkg.com/evg_tick_generator/repo/tgr_min.js"></script>
 ```
 
 ## What is EVG Tick Generator?

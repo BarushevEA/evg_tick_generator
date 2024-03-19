@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BarushevEA/light-observable-ts.git"
+    "url": "git+https://github.com/BarushevEA/evg_tick_generator.git"
   },
   "author": "Barushev E.A.",
   "license": "MIT",
@@ -33,11 +33,15 @@
     "sinon": "^17.0.1"
   },
   "dependencies": {
-    "evg_observable": "^1.5.43"
+    "evg_observable": "^1.5.44"
   },
   "keywords": [
     "EVG tick generator",
     "evg_tick_generator",
+    "requestAnimationFrame",
+    "animationFrame",
+    "animation",
+    "fps",
     "tick generator",
     "tick_generator",
     "time interval",

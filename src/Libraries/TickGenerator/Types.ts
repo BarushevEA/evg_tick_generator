@@ -21,7 +21,7 @@ export type ITimeout = {
     setTimeout(delay: milliseconds): Status;
 };
 
-export type IRInterval = {
+export type IInterval = {
     setInterval(delay: milliseconds): Status;
 };
 

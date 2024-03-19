@@ -1,10 +1,10 @@
-import {IGenerator, IRInterval, milliseconds, Status} from "./Types";
+import {IGenerator, IInterval, milliseconds, Status} from "./Types";
 import {ERROR, EState} from "./Env";
 import {ICallback, ISubscriptionLike} from "evg_observable/src/outLib/Types";
 import {Observable} from "evg_observable/src/outLib/Observable";
 import {getNegativeStatus, getPositiveStatus} from "./Utils";
 
-export class GInterval implements IGenerator, IRInterval {
+export class GInterval implements IGenerator, IInterval {
     private intervalId: any = 0;
     private delay: milliseconds = 0;
     private state$ = new Observable<EState>(EState.UNDEFINED);

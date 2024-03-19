@@ -2,16 +2,8 @@
 EVG tick generator
 </h1>
 <p align=center>
-EVG tick generator - is a light library for simple use.
+EVG Tick Generator - is a light library for simple use.
 </p>
-
-## What is EVG tick generator?
-
-EVG tick generator - single entry point for listener calls at time intervals.
-
-# Notes
-The absolute accuracy of the time interval is not guaranteed.
-Animation functions only work from the browser.
 
 ## Installation
 
@@ -21,82 +13,109 @@ Animation functions only work from the browser.
 
     $ npm install evg_tick_generator
 
-# Usage
+## What is EVG Tick Generator?
+_The EVG Tick Generator_ is a powerful and flexible library for creating and managing timers and events in a web environment. 
 
-### tsconfig.json
+`GInterval` and `GTimeout` work in both **Node.js** context and **browser** context. Meanwhile, 
 
-recommended value of the "strict" field in the configuration
+`GAnimationFrame` uses the requestAnimationFrame method, which is only available in a **browser** context, therefore it can only be used in a **browser**.
 
-```json
-{
-  "compilerOptions": {
-    "strict": false
-  }
-}
+The following interfaces are available for use:
+
+### IGenerator
+The main interface for managing generators. It contains the following methods:
+
+* `state`: Returns the current state of the generator.
+* `subscribeOnState(callback)`: Subscribes to the generator's state changes.
+* `subscribeOnProcess(callback)`: Subscribes to the generation process.
+* `start()`: Starts the generator.
+* `stop()`: Stops the generator.
+* `destroy()`: Destroys the generator and all related resources.
+
+### ITimeout
+ITimeout creates a timeout and allows managing its status. It contains the following method:
+
+* `setTimeout(delay)`: Sets the timeout delay.
+
+### IInterval
+IInterval is designed to create an interval timer, and it allows managing its status. It contains the following method:
+
+* `setInterval(delay)`: Sets the timeout delay.
+
+### IRequestAnimationFrame
+IRequestAnimationFrame provides functionality to create and manage animation loops using the `browser's` requestAnimationFrame method. It contains the following methods:
+
+* `setFPS(num)`: Sets the frames per second rate for animation loops.
+* `set60fps()`: Sets the frames per second rate to 60 for animation loops.
+* `set30fps()`: Sets the frames per second rate to 30 for animation loops.
+* `setDefault()`: Sets the frames per second rate to a "default" value for animation loops.
+
+## Usage Examples
+
+### Creating and using a timer
+```typescript
+// Example of using ITimeout
+
+// 1 create an instance of GTimeout
+const timeout = new GTimeout();
+// 2 set the time interval in milliseconds
+timeout.setTimeout(1000);
+// 3 add a listener
+// 3.1 you can listen to the full list of states
+const subscriber1 = timeout.subscribeOnState(
+    state => {
+        console.log("subscriber1:", state);
+    }
+);
+// 3.2 you can also listen only to the timeout event specified by the time interval
+const subscriber2 = timeout.subscribeOnProcess(
+    state => {
+        console.log("subscriber2:", state);
+    }
+)
+// 3.3 you can have as many subscribers as needed
+// 4 start the event
+timeout.start();
+// 5 if necessary we can stop the event prematurely
+timeout.stop();
+// 6 if you perform a start then the event will work and all subscribers will be called according to subscriptions
+// 7 if subscribers are not needed you can unsubscribe them
+subscriber1.unsubscribe();
+subscriber2.unsubscribe();
+// 8 if there is no need in the GTimeout instance it can be destroyed
+timeout.destroy();
+// when the instance is destroyed, all subscriptions are automatically removed, further use of the instance is not possible
+// 10 you can check the state of the instance in two ways
+console.log(timeout.state);
+console.log(timeout.isDestroyed());
 ```
+* Note, you can set the generator values whenever you like, but they will only be applied if the generator was stopped after completing its current task or by the stop command, and then started by the start command.
 
-## EVG tick generator simple usage
+### Creating and using an interval generator
+```typescript
+// Example of using IInterval
 
-```ts
-import {TickGenerator} from "evg_tick_generator/src/outLib/TickGenerator";
-
-let counter1 = 0;
-let counter2 = 0;
-let counter3 = 0;
-
-const listener1 = () => {
-    console.log("listener1", counter1);
-    if (++counter1 == 2) subscriber1.unsubscribe();
-};
-const listener2 = () => {
-    console.log("listener2", ++counter2);
-    subscriber2.unsubscribe();
-};
-const listener3 = () => console.log("listener3", ++counter3);
-
-const generator = new TickGenerator();
-const subscriber1 = generator.interval1000Subscribe(listener1);
-const subscriber2 = generator.interval1000Subscribe(listener2);
-generator.interval1000Subscribe(listener3);
-
-generator.timeout(() => {
-    generator.destroy();
-}, 5100);
-
-// Print to console:
-// listener1 1
-// listener2 1
-// listener3 1
-// listener1 2
-// listener3 2
-// listener3 3
-// listener3 4
-// listener3 5
+// 1 create an instance of GInterval
+const interval = new GInterval();
+// the rest of the actions are similar to GTimeout usage
 ```
+* Note, you can set the generator values whenever you like, but they will only be applied if the generator was stopped after by the stop command, and then started by the start command.
 
-## Methods
+### Creating and using an animation loop
+```typescript
+// Example of using IRequestAnimationFrame
 
-| method | will return | description                                           |
-| :--- | :--- |:------------------------------------------------------|
-| `.state` | EState | current state                                         |
-| `.stateSubscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will listen state                                     |
-| `.destroy()` | void | will destroy generator                                |
-| `.animationState` | EState | current animation state                               |
-| `.animationSubscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will generate ticks when the browser is ready to draw |
-| `.animationBeforeSubscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will generate ticks before animation                  |
-| `.animationAfterSubscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will generate ticks after animation                   |
-| `.animationStateSubscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will listen animation state                           |
-| `.runAnimation()` | void | will run animation ticks                              |
-| `.stopAnimation()` | void | will stop all animation ticks                         |
-| `.tickHandlerState` | EState | current time ticks state                              |
-| `.interval10Subscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will generate ticks every 10 milliseconds             |
-| `.interval100Subscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will generate ticks every 100 milliseconds            |
-| `.interval500Subscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will generate ticks every 500 milliseconds            |
-| `.interval1000Subscribe(callback: ICallback<any>)` | ISubscriptionLike<any> | will generate ticks every 1000 milliseconds           |
-| `.intervalCustom(callback: ICallback<any>, delay: milliseconds)` | ISubscriptionLike<any> | will generate ticks every custom delays               |
-| `.timeout(callback: ICallback<any>, delay: milliseconds)` | ISubscriptionLike<any> | will generate one tick by custom delay                |
-| `.runTickHandler()` | void | will run time ticks                                   |
-| `.stopTickHandler()` | void | will stop all time ticks                              |
+// 1 create an instance of GAnimationFrame
+const animationFrame = new GAnimationFrame();
+// unlike the previous examples, this generator adapts to the browser page rendering
+// therefore, you can set event generation using
+// setFPS(num)
+// set60fps()
+// set30fps()
+// setDefault()
+// the rest of the actions are similar to GTimeout and GInterval usage
+```
+* Note, you can set the generator values whenever you like, but they will only be applied if the generator was stopped after by the stop command, and then started by the start command.
 
 ## License
 

@@ -8,10 +8,14 @@ EVG Tick Generator - is a light library for simple use.
 ## Installation
 
 ### Node.js
-
 `EVG tick generator` is available on [npm](http://npmjs.org). To install it, type:
 
     $ npm install evg_tick_generator
+
+### Browser
+```html
+<script src="https://unpkg.com/evg_observable/repo/tgr_min.js"></script>
+```
 
 ## What is EVG Tick Generator?
 _The EVG Tick Generator_ is a powerful and flexible library for creating and managing timers and events in a web environment. 
@@ -51,6 +55,13 @@ IRequestAnimationFrame provides functionality to create and manage animation loo
 * `setDefault()`: Sets the frames per second rate to a "default" value for animation loops.
 
 ## Usage Examples
+
+#### Imports for **Node.js** + TS
+```typescript
+import {GTimeout} from "./tick_generator/src/TickGenerator/GTimeout";
+import {GInterval} from "./tick_generator/src/TickGenerator/GInterval";
+import {GAnimationFrame} from "./tick_generator/src/TickGenerator/GAnimationFrame";
+```
 
 ### Creating and using a timer
 ```typescript

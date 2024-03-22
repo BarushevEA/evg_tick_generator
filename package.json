@@ -33,7 +33,7 @@
     "sinon": "^17.0.1"
   },
   "dependencies": {
-    "evg_observable": "^1.5.44"
+    "evg_observable": "^1.6.44"
   },
   "keywords": [
     "EVG tick generator",

@@ -5,8 +5,10 @@ export enum EState {
     PROCESS = "PROCESS",
     DESTROYED = "DESTROYED",
     UNDEFINED = "UNDEFINED",
+    READY = "READY",
 }
 
 export enum ERROR {
-    ERROR_NEGATIVE_DELAY = "Delay must be a positive number.",
+    NEGATIVE_DELAY = "Delay must be a positive number.",
+    TYPE_INVALID = "TYPE_INVALID",
 }

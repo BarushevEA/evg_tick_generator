@@ -15,7 +15,7 @@ export class GTimeoutOrdered extends AbstractOrderedGenerator implements ITimeou
         const state = this.state;
         if (this.isDestroyed()) return getNegativeStatus(EState.DESTROYED);
         if (state === EState.STARTED) return getNegativeStatus(state);
-        if (delay < 0) return getNegativeStatus(ERROR.ERROR_NEGATIVE_DELAY);
+        if (delay < 0) return getNegativeStatus(ERROR.NEGATIVE_DELAY);
 
         this.delay = delay;
 

@@ -8,14 +8,17 @@ export type Status = {
     state: EState | ERROR;
 };
 
-export type IGenerator = {
+export type ILifeCircle = {
     state: EState;
-    subscribeOnState(callback: ICallback<EState>): ISubscriptionLike | undefined;
-    subscribeOnProcess(callback: ICallback<EState>): ISubscriptionLike | undefined;
     start(): Status;
     stop(): Status;
     destroy(): Status;
     isDestroyed(): boolean;
+}
+
+export type IGenerator = ILifeCircle & {
+    subscribeOnState(callback: ICallback<EState>): ISubscriptionLike | undefined;
+    subscribeOnProcess(callback: ICallback<EState>): ISubscriptionLike | undefined;
 };
 
 export type ITimeout = {
@@ -31,4 +34,12 @@ export type IRequestAnimationFrame = {
     set60fps(): Status;
     set30fps(): Status;
     setDefault(): Status;
+};
+
+export type ITickCounter = ILifeCircle & {
+    getTicksPerPeriod(): number;
+    getTicksSum(): number;
+    setPeriod(period: number): Status;
+    resetPeriod(): Status;
+    subscribe(callback: ICallback<number>): ISubscriptionLike | undefined;
 };

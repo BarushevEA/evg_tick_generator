@@ -1,6 +1,6 @@
 {
   "name": "evg_tick_generator",
-  "version": "2.1.8",
+  "version": "2.2.8",
   "description": "Single entry point for listener calls at time intervals",
   "main": "index.js",
   "directories": {
@@ -36,8 +36,6 @@
     "evg_observable": "^1.6.44"
   },
   "keywords": [
-    "EVG tick generator",
-    "evg_tick_generator",
     "requestAnimationFrame",
     "animationFrame",
     "animation",

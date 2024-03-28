@@ -16,7 +16,7 @@ export class GAnimationFrameOrdered extends AbstractOrderedGenerator implements 
         const state = this.state;
         if (this.isDestroyed()) return getNegativeStatus(EState.DESTROYED);
         if (state === EState.STARTED) return getNegativeStatus(state);
-        if (num < 1) return getNegativeStatus(ERROR.ERROR_NEGATIVE_DELAY);
+        if (num < 1) return getNegativeStatus(ERROR.NEGATIVE_DELAY);
 
         this.fps = num;
         return getPositiveStatus(this.state);
@@ -57,7 +57,7 @@ export class GAnimationFrameOrdered extends AbstractOrderedGenerator implements 
     }
 
     stopProcess(): Status {
-        if (!this.rafId) return getNegativeStatus(ERROR.ERROR_NEGATIVE_DELAY);
+        if (!this.rafId) return getNegativeStatus(ERROR.NEGATIVE_DELAY);
         cancelAnimationFrame(this.rafId);
         this.rafId = null;
         return getPositiveStatus(EState.STOPPED)

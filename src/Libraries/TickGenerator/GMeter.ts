@@ -95,9 +95,8 @@ export class GMeter implements IMeter {
     }
 
     decorate(funcName: string, func: (...args: any[]) => any): (...args: any[]) => any {
-        if (this.isDestroyed()) {
-            throw (ERROR.INSTANCE_DESTROYED);
-        }
+        if (this.isDestroyed()) throw new Error(ERROR.INSTANCE_DESTROYED);
+        if (funcName in this.metrics) throw new Error(`A function with the name "${funcName}" is already decorated`);
 
         const deleteObj = {isDeleted: false}
         const counter = {

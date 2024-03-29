@@ -3,6 +3,7 @@ import {ERROR, EState} from "./Env";
 import {AbstractGenerator} from "./AbstractGenerator";
 import {ICallback, ISubscriptionLike} from "evg_observable/src/outLib/Types";
 import {Observable} from "evg_observable/src/outLib/Observable";
+import {getNegativeStatus} from "./Utils";
 
 export class TickCounter implements ITickCounter {
     private _state = EState.UNDEFINED;
@@ -36,7 +37,7 @@ export class TickCounter implements ITickCounter {
     }
 
     resetPeriod(): Status {
-        if (this.isDestroyed()) return {isApplied: false, state: this.state};
+        if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
         if ((this.state == EState.STOPPED) || (this.state == EState.INIT)) return {
             isApplied: false,
             state: this.state
@@ -47,7 +48,7 @@ export class TickCounter implements ITickCounter {
     }
 
     setPeriod(period: number): Status {
-        if (this.isDestroyed()) return {isApplied: false, state: this.state};
+        if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
         if ((this.state == EState.STOPPED) || (this.state == EState.INIT)) return {
             isApplied: false,
             state: this.state
@@ -67,7 +68,7 @@ export class TickCounter implements ITickCounter {
     }
 
     start(): Status {
-        if (this.isDestroyed()) return {isApplied: false, state: this.state};
+        if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
 
         let innerCounter = 0;
         this.subscriber = this.subject.subscribeOnProcess(() => {
@@ -87,7 +88,7 @@ export class TickCounter implements ITickCounter {
     }
 
     stop(): Status {
-        if (this.isDestroyed()) return {isApplied: false, state: this.state};
+        if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
         if (this.timer) clearInterval(this.timer);
 
         this.subscriber?.unsubscribe();

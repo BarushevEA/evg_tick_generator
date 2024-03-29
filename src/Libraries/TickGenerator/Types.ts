@@ -43,3 +43,32 @@ export type ITickCounter = ILifeCircle & {
     resetPeriod(): Status;
     subscribe(callback: ICallback<number>): ISubscriptionLike | undefined;
 };
+
+export type IMeterData = {
+    countOfUses: number;
+    countOfErrors: number;
+    useTime: number;
+    countOfUsesPerSecond: number;
+    countOfUsesPerMinute: number;
+    countOfUsesPerHour: number;
+    countOfUsesPerDay: number;
+    _deleteObj: { isDeleted: boolean; };
+    _counter: {
+        seconds: number;
+        minutes: number;
+        hours: number;
+        days: number;
+    };
+};
+
+export type Metrics = {
+    [funcName: string]: IMeterData;
+};
+
+export type IMeter = ILifeCircle & {
+    length: number;
+    decorate(funcName: string, func: (...args: any[]) => any): (...args: any[]) => any;
+    deleteFunc(funcName: string): Status;
+    getMetrics(funcName: string): IMeterData;
+    getAll(): Metrics;
+};

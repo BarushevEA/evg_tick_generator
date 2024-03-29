@@ -3,7 +3,7 @@ import {ERROR, EState} from "./Env";
 import {AbstractGenerator} from "./AbstractGenerator";
 import {ICallback, ISubscriptionLike} from "evg_observable/src/outLib/Types";
 import {Observable} from "evg_observable/src/outLib/Observable";
-import {getNegativeStatus} from "./Utils";
+import {getNegativeStatus, getPositiveStatus} from "./Utils";
 
 export class TickCounter implements ITickCounter {
     private _state = EState.UNDEFINED;
@@ -44,7 +44,7 @@ export class TickCounter implements ITickCounter {
         };
 
         this.periodMs = this.defaultPeriodMs;
-        return {isApplied: true, state: this.state};
+        return getPositiveStatus(this.state);
     }
 
     setPeriod(period: number): Status {
@@ -59,7 +59,7 @@ export class TickCounter implements ITickCounter {
         };
 
         this.periodMs = period;
-        return {isApplied: true, state: this.state};
+        return getPositiveStatus(this.state);
     }
 
     subscribe(callback: ICallback<number>): ISubscriptionLike | undefined {
@@ -84,7 +84,7 @@ export class TickCounter implements ITickCounter {
         }, this.periodMs);
 
         this._state = EState.STARTED;
-        return {isApplied: true, state: this.state};
+        return getPositiveStatus(this.state);
     }
 
     stop(): Status {
@@ -95,7 +95,7 @@ export class TickCounter implements ITickCounter {
         this.counter = 0;
         this.sum = 0;
         this._state = EState.STOPPED;
-        return {isApplied: true, state: this.state};
+        return getPositiveStatus(this.state);
     }
 
     isDestroyed(): boolean {
@@ -106,6 +106,6 @@ export class TickCounter implements ITickCounter {
         this.stop();
         this.counter$.destroy();
         this._state = EState.DESTROYED;
-        return {isApplied: true, state: this.state};
+        return getPositiveStatus(this.state);
     }
 }

@@ -4,12 +4,13 @@ import {IRequestAnimationFrame, Status} from "./Types";
 import {AbstractGenerator} from "./AbstractGenerator";
 
 export class GAnimationFrame extends AbstractGenerator implements IRequestAnimationFrame {
-    private rafId: number | null = null;
-    private fps: number = 60;
+    private rafId: number | null;
+    private fps: number;
 
-    constructor(rafId: number | null) {
+    constructor() {
         super();
-        this.rafId = rafId;
+        this.fps = 60;
+        this.rafId = null;
     }
 
     setFPS(num: number): Status {

@@ -38,10 +38,7 @@ export class TickCounter implements ITickCounter {
 
     resetPeriod(): Status {
         if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
-        if ((this.state == EState.STOPPED) || (this.state == EState.INIT)) return {
-            isApplied: false,
-            state: this.state
-        };
+        if (this.state === EState.STARTED) getNegativeStatus(this.state);
 
         this.periodMs = this.defaultPeriodMs;
         return getPositiveStatus(this.state);
@@ -49,10 +46,8 @@ export class TickCounter implements ITickCounter {
 
     setPeriod(period: number): Status {
         if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
-        if ((this.state == EState.STOPPED) || (this.state == EState.INIT)) return {
-            isApplied: false,
-            state: this.state
-        };
+        if (this.state === EState.STARTED) getNegativeStatus(this.state);
+
         if ((typeof period !== 'number') || (period < 0)) return {
             isApplied: false,
             state: ERROR.TYPE_INVALID
@@ -69,6 +64,7 @@ export class TickCounter implements ITickCounter {
 
     start(): Status {
         if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
+        if (this.state === EState.STARTED) getNegativeStatus(this.state);
 
         let innerCounter = 0;
         this.subscriber = this.subject.subscribeOnProcess(() => {

@@ -120,8 +120,8 @@ export class GMeter implements IMeter {
 
         this.addTimers(deleteObj, funcName);
 
-        return async (...args: any[]) => {
-            if (deleteObj.isDeleted) return await func(...args);
+        return (...args: any[]) => {
+            if (deleteObj.isDeleted) return func(...args);
 
             const start = Date.now();
             this.metrics[funcName].countOfUses++;
@@ -131,7 +131,7 @@ export class GMeter implements IMeter {
             this.metrics[funcName]._counter.days++;
 
             try {
-                return await func(...args);
+                return func(...args);
             } catch (error) {
                 if (!deleteObj.isDeleted) this.metrics[funcName].countOfErrors++;
                 throw error;
@@ -148,16 +148,22 @@ export class GMeter implements IMeter {
 
         this.addTimer(deleteObj, this.perSecondTimer, () => {
             this.metrics[funcName].countOfUsesPerSecond = counter.seconds;
+            this.metrics[funcName].countOfUsesPerMinute = counter.minutes;
+            this.metrics[funcName].countOfUsesPerHour = counter.hours;
+            this.metrics[funcName].countOfUsesPerDay = counter.days;
             counter.seconds = 0;
         });
 
         this.addTimer(deleteObj, this.perMinuteTimer, () => {
             this.metrics[funcName].countOfUsesPerMinute = counter.minutes;
+            this.metrics[funcName].countOfUsesPerHour = counter.hours;
+            this.metrics[funcName].countOfUsesPerDay = counter.days;
             counter.minutes = 0;
         });
 
         this.addTimer(deleteObj, this.perHourTimer, () => {
             this.metrics[funcName].countOfUsesPerHour = counter.hours;
+            this.metrics[funcName].countOfUsesPerDay = counter.days;
             counter.hours = 0;
         });
 

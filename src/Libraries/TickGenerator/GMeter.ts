@@ -109,7 +109,8 @@ export class GMeter implements IMeter {
         this.metrics[funcName] = {
             countOfUses: 0,
             countOfErrors: 0,
-            useTime: 0,
+            totalExecutionTime: 0,
+            timePerCall: 0,
             countOfUsesPerSecond: 0,
             countOfUsesPerMinute: 0,
             countOfUsesPerHour: 0,
@@ -137,7 +138,8 @@ export class GMeter implements IMeter {
                 throw error;
             } finally {
                 if (!deleteObj.isDeleted) {
-                    this.metrics[funcName].useTime += Date.now() - start;
+                    this.metrics[funcName].timePerCall = Date.now() - start;
+                    this.metrics[funcName].totalExecutionTime += this.metrics[funcName].timePerCall;
                 }
             }
         };

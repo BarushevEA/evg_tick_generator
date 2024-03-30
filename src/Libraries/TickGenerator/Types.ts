@@ -47,7 +47,8 @@ export type ITickCounter = ILifeCircle & {
 export type IMeterData = {
     countOfUses: number;
     countOfErrors: number;
-    useTime: number;
+    totalExecutionTime: number;
+    timePerCall: number;
     countOfUsesPerSecond: number;
     countOfUsesPerMinute: number;
     countOfUsesPerHour: number;

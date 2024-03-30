@@ -1,7 +1,7 @@
-import {IMeter, IMeterData, Metrics, Status} from "./Types";
+import {IMeter, IUserMeterData, IUserMetrics, Metrics, Status} from "./Types";
 import {ERROR, EState} from "./Env";
 import {GInterval} from "./GInterval";
-import {getNegativeStatus, getPositiveStatus} from "./Utils";
+import {getAvgNum, getMaxNum, getMinNum, getNegativeStatus, getPositiveStatus} from "./Utils";
 import {AbstractGenerator} from "./AbstractGenerator";
 
 
@@ -115,8 +115,20 @@ export class GMeter implements IMeter {
             countOfUsesPerMinute: 0,
             countOfUsesPerHour: 0,
             countOfUsesPerDay: 0,
+            countOfUsesPerDayAvg: 0,
+            countOfUsesPerDayMax: 0,
+            countOfUsesPerDayMin: 0,
+            countOfUsesPerHourAvg: 0,
+            countOfUsesPerHourMax: 0,
+            countOfUsesPerHourMin: 0,
+            countOfUsesPerMinuteAvg: 0,
+            countOfUsesPerMinuteMax: 0,
+            countOfUsesPerMinuteMin: 0,
+            countOfUsesPerSecondAvg: 0,
+            countOfUsesPerSecondMax: 0,
+            countOfUsesPerSecondMin: 0,
             _deleteObj: deleteObj,
-            _counter: counter,
+            _counter: counter
         };
 
         this.addTimers(deleteObj, funcName);
@@ -150,27 +162,57 @@ export class GMeter implements IMeter {
 
         this.addTimer(deleteObj, this.perSecondTimer, () => {
             this.metrics[funcName].countOfUsesPerSecond = counter.seconds;
+            this.metrics[funcName].countOfUsesPerSecondMax = getMaxNum(this.metrics[funcName].countOfUsesPerSecond, counter.seconds);
+            this.metrics[funcName].countOfUsesPerSecondMin = getMinNum(this.metrics[funcName].countOfUsesPerSecond, counter.seconds);
+            this.metrics[funcName].countOfUsesPerSecondAvg = getAvgNum(this.metrics[funcName].countOfUsesPerSecond, counter.seconds);
             this.metrics[funcName].countOfUsesPerMinute = counter.minutes;
+            this.metrics[funcName].countOfUsesPerMinuteMax = getMaxNum(this.metrics[funcName].countOfUsesPerMinute, counter.minutes);
+            this.metrics[funcName].countOfUsesPerMinuteMin = getMinNum(this.metrics[funcName].countOfUsesPerMinute, counter.minutes);
+            this.metrics[funcName].countOfUsesPerMinuteAvg = getAvgNum(this.metrics[funcName].countOfUsesPerMinute, counter.minutes);
             this.metrics[funcName].countOfUsesPerHour = counter.hours;
+            this.metrics[funcName].countOfUsesPerHourMax = getMaxNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
+            this.metrics[funcName].countOfUsesPerHourMin = getMinNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
+            this.metrics[funcName].countOfUsesPerHourAvg = getAvgNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
             this.metrics[funcName].countOfUsesPerDay = counter.days;
+            this.metrics[funcName].countOfUsesPerDayMax = getMaxNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayMin = getMinNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayAvg = getAvgNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
             counter.seconds = 0;
         });
 
         this.addTimer(deleteObj, this.perMinuteTimer, () => {
             this.metrics[funcName].countOfUsesPerMinute = counter.minutes;
+            this.metrics[funcName].countOfUsesPerMinuteMax = getMaxNum(this.metrics[funcName].countOfUsesPerMinute, counter.minutes);
+            this.metrics[funcName].countOfUsesPerMinuteMin = getMinNum(this.metrics[funcName].countOfUsesPerMinute, counter.minutes);
+            this.metrics[funcName].countOfUsesPerMinuteAvg = getAvgNum(this.metrics[funcName].countOfUsesPerMinute, counter.minutes);
             this.metrics[funcName].countOfUsesPerHour = counter.hours;
+            this.metrics[funcName].countOfUsesPerHourMax = getMaxNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
+            this.metrics[funcName].countOfUsesPerHourMin = getMinNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
+            this.metrics[funcName].countOfUsesPerHourAvg = getAvgNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
             this.metrics[funcName].countOfUsesPerDay = counter.days;
+            this.metrics[funcName].countOfUsesPerDayMax = getMaxNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayMin = getMinNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayAvg = getAvgNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
             counter.minutes = 0;
         });
 
         this.addTimer(deleteObj, this.perHourTimer, () => {
             this.metrics[funcName].countOfUsesPerHour = counter.hours;
+            this.metrics[funcName].countOfUsesPerHourMax = getMaxNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
+            this.metrics[funcName].countOfUsesPerHourMin = getMinNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
+            this.metrics[funcName].countOfUsesPerHourAvg = getAvgNum(this.metrics[funcName].countOfUsesPerHour, counter.hours);
             this.metrics[funcName].countOfUsesPerDay = counter.days;
+            this.metrics[funcName].countOfUsesPerDayMax = getMaxNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayMin = getMinNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayAvg = getAvgNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
             counter.hours = 0;
         });
 
         this.addTimer(deleteObj, this.perDayTimer, () => {
             this.metrics[funcName].countOfUsesPerDay = counter.days;
+            this.metrics[funcName].countOfUsesPerDayMax = getMaxNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayMin = getMinNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
+            this.metrics[funcName].countOfUsesPerDayAvg = getAvgNum(this.metrics[funcName].countOfUsesPerDay, counter.days);
             counter.days = 0;
         });
     }
@@ -186,12 +228,21 @@ export class GMeter implements IMeter {
         });
     }
 
-    getMetrics(funcName: string): IMeterData {
-        return this.metrics[funcName];
+    getMetrics(funcName: string): IUserMeterData {
+        const metrics: IUserMeterData = {...this.metrics[funcName]};
+        delete (<any>metrics)._deleteObj;
+        delete (<any>metrics)._counter;
+        return metrics;
     }
 
-    getAll(): Metrics {
-        return this.metrics;
+    getAll(): IUserMetrics {
+        const userMetrics: IUserMetrics = {};
+
+        for (const metricsKey in this.metrics) {
+            userMetrics[metricsKey] = this.getMetrics(metricsKey);
+        }
+
+        return userMetrics;
     }
 
     get length(): number {

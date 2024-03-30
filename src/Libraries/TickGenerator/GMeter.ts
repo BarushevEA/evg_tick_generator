@@ -49,6 +49,13 @@ export class GMeter implements IMeter {
         this.perHourTimer.stop();
         this.perDayTimer.stop();
 
+        for (const metricsKey in this.metrics) {
+            this.metrics[metricsKey]._counter.days = 0;
+            this.metrics[metricsKey]._counter.hours = 0;
+            this.metrics[metricsKey]._counter.minutes = 0;
+            this.metrics[metricsKey]._counter.seconds = 0;
+        }
+
         return getPositiveStatus(EState.STOPPED);
     }
 

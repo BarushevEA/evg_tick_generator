@@ -54,14 +54,15 @@ export class GAnimationFrame extends AbstractGenerator implements IRequestAnimat
         this.rafId = requestAnimationFrame(animateFrame);
 
         this.state$.next(EState.STARTED);
-        return getPositiveStatus(EState.STARTED)
+        return getPositiveStatus(EState.STARTED);
     }
 
     stopProcess(): Status {
         if (!this.rafId) return getNegativeStatus(ERROR.NEGATIVE_DELAY);
         cancelAnimationFrame(this.rafId);
         this.rafId = null;
-        this.state$.next(EState.STOPPED)
+
+        this.state$.next(EState.STOPPED);
         return getPositiveStatus(EState.STOPPED)
     }
 }

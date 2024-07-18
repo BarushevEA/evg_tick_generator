@@ -1,8 +1,8 @@
 {
   "name": "evg_tick_generator",
-  "version": "2.2.8",
+  "version": "2.3.9",
   "description": "Single entry point for listener calls at time intervals",
-  "main": "index.js",
+  "main": "src/outLib/index.js",
   "directories": {
     "test": "test"
   },

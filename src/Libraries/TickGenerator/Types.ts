@@ -87,7 +87,8 @@ export type IUserMetrics = {
 
 export type IMeter = ILifeCircle & {
     length: number;
-    decorate(funcName: string, func: (...args: any[]) => any): (...args: any[]) => any;
+    decorate<T>(funcName: string, func: (...args: any[]) => T): (...args: any[]) => T;
+    decorateAsync<T>(funcName: string, func: (...args: any[]) => Promise<T>): (...args: any[]) => Promise<T>
     deleteFunc(funcName: string): Status;
     getMetrics(funcName: string): IUserMeterData;
     getAll(): IUserMetrics;

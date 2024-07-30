@@ -20,9 +20,15 @@ export function Measure(classNameOriginal?: string, gMeterOptional?: GMeter) {
         const isAsync = funcType1 === '[object AsyncFunction]' || funcType2 === 'AsyncFunction';
 
         if (isAsync) {
-            descriptor.value = meter.decorateAsync(`Async method: ${className}.${propertyKey}`, originalMethod.bind(target));
+            descriptor.value = function (...args: any[]) {
+                const decorated = meter.decorateAsync(`Async method: ${className}.${propertyKey}`, () => originalMethod.apply(this, args));
+                return decorated();
+            };
         } else {
-            descriptor.value = meter.decorate(`Sync method: ${className}.${propertyKey}`, originalMethod.bind(target));
+            descriptor.value = function (...args: any[]) {
+                const decorated = meter.decorate(`Sync method: ${className}.${propertyKey}`, () => originalMethod.apply(this, args));
+                return decorated();
+            };
         }
     };
 }

@@ -20,9 +20,9 @@ export function Measure(classNameOriginal?: string, gMeterOptional?: GMeter) {
         const isAsync = funcType1 === '[object AsyncFunction]' || funcType2 === 'AsyncFunction';
 
         if (isAsync) {
-            descriptor.value = meter.decorateAsync(`Async method: ${className}.${propertyKey}`, originalMethod);
+            descriptor.value = meter.decorateAsync(`Async method: ${className}.${propertyKey}`, originalMethod.bind(target));
         } else {
-            descriptor.value = meter.decorate(`Sync method: ${className}.${propertyKey}`, originalMethod);
+            descriptor.value = meter.decorate(`Sync method: ${className}.${propertyKey}`, originalMethod.bind(target));
         }
     };
 }

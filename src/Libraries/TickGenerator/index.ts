@@ -7,3 +7,5 @@ export {GAnimationFrameOrdered} from "./GAnimationFrameOrdered";
 
 export {TickCounter} from "./TickCounter"
 export {GMeter} from "./GMeter"
+export {Measure} from "./MethodDecorator"
+export {getDefaultMeasureMeter} from "./MethodDecorator"

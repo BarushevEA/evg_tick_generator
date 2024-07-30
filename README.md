@@ -175,6 +175,82 @@ const interval = new GAnimationFrameOrdered();
 ```
 * Note, you can set the generator values whenever you like, but they will only be applied if the generator was stopped after by the stop command, and then started by the start command.
 
+### GMeter
+GMeter is a new feature that provides useful statistics about functions being decorated.
+```typescript
+export class GMeter {
+  // ...
+}
+```
+The GMeter can measure different function aspects, such as the number of uses, the number of errors, the overall execution time, and the last call time.
+The methods available for use in GMeter include:
+
+* `start()`: Start collecting metrics.
+* `stop()`: Stop collecting metrics and reset the counters.
+* `destroy()`: Stop the metrics collection and release resources, making it unavailable for further usage.
+* `deleteFunc(funcName: string)`: Delete metrics data related to the specified function.
+* `decorate<T>(funcName: string, func: (...args: any[]) => T)`: Decorate a function to start taking measurements.
+* `decorateAsync<T>(funcName: string, func: (...args: any[]) => Promise<T>)`: Decorate an asynchronous function to start taking measurements.
+* `getMetrics(funcName: string)`: Get the metrics data for the specified function
+* `getAll()`: Get the metrics data for all decorated functions.
+
+Example usage:
+
+```typescript
+const meter = new GMeter();
+meter.start();
+
+function myFunc(){
+    //
+}
+
+myFunc = meter.decorate("myFunc", myFunc);
+
+myFunc();
+myFunc();
+myFunc();
+
+console.log(meter.getAll());
+
+// {
+//     'myFunc': {
+//     countOfUses: 3,
+//     countOfErrors: 0,
+//     totalExecutionTime: 1147,
+//    .........
+//    }
+// }
+
+```
+
+### `*`Measure
+Measure is the new decorator utility function added to enhance statistics of functions (both sync and async).
+```typescript
+export function Measure(classNameOriginal?: string, gMeterOptional?: GMeter) {
+  // ...
+}
+```
+Example usage:
+
+```typescript
+class MyClass {
+    @Measure()
+    myFunction() {
+        // Some logic here...
+    }
+
+    @Measure()
+    async myAsyncFunction() {
+        // Some async logic here...
+    }
+}
+
+const measureMeter = getDefaultMeasureMeter();
+console.log(measureMeter.getAll());
+```
+In the example above, `myFunction` and `myAsyncFunction` are being decorated by `Measure()`. It means their statistics will be measured and can be retrieved using the `GMeter` instance's methods, `getMetrics(funcName: string)` and `getAll()`. You can also optionally pass the class name and `GMeter` instance to the Measure decorator. If the default `GMeter` is used, you can gain control over it using the `getDefaultMeasureMeter()` function.
+* `*` Note: The Measure decorator is intended only for use in the TypeScript environment with class methods.
+
 ## License
 
 MIT

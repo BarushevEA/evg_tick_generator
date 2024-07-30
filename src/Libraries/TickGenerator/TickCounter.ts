@@ -64,7 +64,7 @@ export class TickCounter implements ITickCounter {
 
     start(): Status {
         if (this.isDestroyed()) getNegativeStatus(ERROR.INSTANCE_DESTROYED);
-        if (this.state === EState.STARTED) getNegativeStatus(this.state);
+        if (this.state === EState.STARTED) getNegativeStatus(EState.STARTED);
 
         let innerCounter = 0;
         this.subscriber = this.subject.subscribeOnProcess(() => {

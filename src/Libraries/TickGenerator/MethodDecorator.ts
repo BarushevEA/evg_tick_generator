@@ -24,14 +24,14 @@ export function Measure(measurementName?: string, gMeterOptional?: GMeter) {
         if (isAsync) {
             const decorationName = measurementName || `Async method: ${targetName}.${propertyKey}`;
             descriptor.value = function (...args: any[]) {
-                !decorated && (decorated = meter.decorateAsync(decorationName, () => originalMethod.apply(this, args)));
-                return decorated();
+                !decorated && (decorated = meter.decorateAsync(decorationName, (dataArr) => originalMethod.apply(this, dataArr)));
+                return decorated(args);
             };
         } else {
             const decorationName = measurementName || `Sync method: ${targetName}.${propertyKey}`;
             descriptor.value = function (...args: any[]) {
-                !decorated && (decorated = meter.decorate(decorationName, () => originalMethod.apply(this, args)));
-                return decorated();
+                !decorated && (decorated = meter.decorate(decorationName, (dataArr) => originalMethod.apply(this, dataArr)));
+                return decorated(args);
             };
         }
     };

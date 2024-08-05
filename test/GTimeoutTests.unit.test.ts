@@ -51,14 +51,17 @@ class GTimeoutTests {
 
     @test "Start method should be EState.PROCESS and EState.STOPPED"() {
         let count = 0;
-        this.TIMEOUT.setTimeout(1);
-        this.TIMEOUT.subscribeOnState(state => {
+        const timeout = new GTimeout();
+        timeout.setTimeout(1);
+        timeout.subscribeOnState(state => {
             count++;
-            if (count === 1) expect(state).to.equal(EState.STARTED);
-            if (count === 2) expect(state).to.equal(EState.PROCESS);
-            if (count === 3) expect(state).to.equal(EState.STOPPED);
+
+            console.log("timeout.subscribeOnState",count, state);
+            if (count === 1) expect(EState.STARTED).to.equal(state);
+            if (count === 2) expect(EState.PROCESS).to.equal(state);
+            if (count === 3) expect(EState.STOPPED).to.equal(state);
         });
-        this.TIMEOUT.start();
+        timeout.start();
     }
 
     @test "Stop method should change state to STOPPED"() {

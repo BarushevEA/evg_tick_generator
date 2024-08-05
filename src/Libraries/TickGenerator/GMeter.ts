@@ -4,37 +4,37 @@ import {GInterval} from "./GInterval";
 import {getAvgNum, getMaxNum, getMinNumNotZero, getNegativeStatus, getPositiveStatus} from "./Utils";
 import {AbstractGenerator} from "./AbstractGenerator";
 
-function updateMetricsPerSecond(metric: IMeterData) {
+const updateMetricsPerSecond = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerSecond = counter.seconds;
     metric.countOfUsesPerSecondMax = getMaxNum(metric.countOfUsesPerSecondMax, counter.seconds);
     metric.countOfUsesPerSecondMin = getMinNumNotZero(metric.countOfUsesPerSecondMin, counter.seconds);
     metric.countOfUsesPerSecondAvg = getAvgNum(metric.countOfUsesPerSecondAvg, counter.seconds);
-}
+};
 
-function updateMetricsPerPerMinute(metric: IMeterData) {
+const updateMetricsPerPerMinute = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerMinute = counter.minutes;
     metric.countOfUsesPerMinuteMax = getMaxNum(metric.countOfUsesPerMinuteMax, counter.minutes);
     metric.countOfUsesPerMinuteMin = getMinNumNotZero(metric.countOfUsesPerMinuteMin, counter.minutes);
     metric.countOfUsesPerMinuteAvg = getAvgNum(metric.countOfUsesPerMinuteAvg, counter.minutes);
-}
+};
 
-function updateMetricsPerHour(metric: IMeterData) {
+const updateMetricsPerHour = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerHour = counter.hours;
     metric.countOfUsesPerHourMax = getMaxNum(metric.countOfUsesPerHourMax, counter.hours);
     metric.countOfUsesPerHourMin = getMinNumNotZero(metric.countOfUsesPerHourMin, counter.hours);
     metric.countOfUsesPerHourAvg = getAvgNum(metric.countOfUsesPerHourAvg, counter.hours);
-}
+};
 
-function updateMetricsPerDay(metric: IMeterData) {
+const updateMetricsPerDay = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerDay = counter.days;
     metric.countOfUsesPerDayMax = getMaxNum(metric.countOfUsesPerDayMax, counter.days);
     metric.countOfUsesPerDayMin = getMinNumNotZero(metric.countOfUsesPerDayMin, counter.days);
     metric.countOfUsesPerDayAvg = getAvgNum(metric.countOfUsesPerDayAvg, counter.days);
-}
+};
 
 export class GMeter implements IMeter {
     private readonly metrics: Metrics;
@@ -274,7 +274,7 @@ export class GMeter implements IMeter {
     }
 
     getMetrics(funcName: string): IUserMeterData {
-        const metrics: IUserMeterData = {...this.metrics[funcName]};
+        const metrics: IUserMeterData = {...(<any>this.metrics)[funcName]};
         delete (<any>metrics)._deleteObj;
         delete (<any>metrics)._counter;
         return metrics;

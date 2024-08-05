@@ -1,6 +1,6 @@
 {
   "name": "evg_tick_generator",
-  "version": "2.4.18",
+  "version": "2.4.19",
   "description": "Single entry point for listener calls at time intervals",
   "main": "src/outLib/index.js",
   "directories": {
@@ -33,7 +33,7 @@
     "sinon": "^17.0.1"
   },
   "dependencies": {
-    "evg_observable": "^2.14.57"
+    "evg_observable": "^2.14.58"
   },
   "keywords": [
     "requestAnimationFrame",

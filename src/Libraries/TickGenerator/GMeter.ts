@@ -1,86 +1,86 @@
 import {IMeter, IMeterData, IUserMeterData, IUserMetrics, Metrics, Status} from "./Types";
 import {ERROR, EState} from "./Env";
 import {GInterval} from "./GInterval";
-import {getAvgNum, getMaxNum, getMinNumNotZero, getNegativeStatus, getPositiveStatus} from "./Utils";
+import {getAvg, getMax, getMinNumNotZero, getNegative, getPositive} from "./Utils";
 import {AbstractGenerator} from "./AbstractGenerator";
 
 const updateMetricsPerSecond = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerSecond = counter.seconds;
-    metric.countOfUsesPerSecondMax = getMaxNum(metric.countOfUsesPerSecondMax, counter.seconds);
+    metric.countOfUsesPerSecondMax = getMax(metric.countOfUsesPerSecondMax, counter.seconds);
     metric.countOfUsesPerSecondMin = getMinNumNotZero(metric.countOfUsesPerSecondMin, counter.seconds);
-    metric.countOfUsesPerSecondAvg = getAvgNum(metric.countOfUsesPerSecondAvg, counter.seconds);
+    metric.countOfUsesPerSecondAvg = getAvg(metric.countOfUsesPerSecondAvg, counter.seconds);
 };
 
 const updateMetricsPerPerMinute = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerMinute = counter.minutes;
-    metric.countOfUsesPerMinuteMax = getMaxNum(metric.countOfUsesPerMinuteMax, counter.minutes);
+    metric.countOfUsesPerMinuteMax = getMax(metric.countOfUsesPerMinuteMax, counter.minutes);
     metric.countOfUsesPerMinuteMin = getMinNumNotZero(metric.countOfUsesPerMinuteMin, counter.minutes);
-    metric.countOfUsesPerMinuteAvg = getAvgNum(metric.countOfUsesPerMinuteAvg, counter.minutes);
+    metric.countOfUsesPerMinuteAvg = getAvg(metric.countOfUsesPerMinuteAvg, counter.minutes);
 };
 
 const updateMetricsPerHour = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerHour = counter.hours;
-    metric.countOfUsesPerHourMax = getMaxNum(metric.countOfUsesPerHourMax, counter.hours);
+    metric.countOfUsesPerHourMax = getMax(metric.countOfUsesPerHourMax, counter.hours);
     metric.countOfUsesPerHourMin = getMinNumNotZero(metric.countOfUsesPerHourMin, counter.hours);
-    metric.countOfUsesPerHourAvg = getAvgNum(metric.countOfUsesPerHourAvg, counter.hours);
+    metric.countOfUsesPerHourAvg = getAvg(metric.countOfUsesPerHourAvg, counter.hours);
 };
 
 const updateMetricsPerDay = (metric: IMeterData) => {
     const counter = metric._counter;
     metric.countOfUsesPerDay = counter.days;
-    metric.countOfUsesPerDayMax = getMaxNum(metric.countOfUsesPerDayMax, counter.days);
+    metric.countOfUsesPerDayMax = getMax(metric.countOfUsesPerDayMax, counter.days);
     metric.countOfUsesPerDayMin = getMinNumNotZero(metric.countOfUsesPerDayMin, counter.days);
-    metric.countOfUsesPerDayAvg = getAvgNum(metric.countOfUsesPerDayAvg, counter.days);
+    metric.countOfUsesPerDayAvg = getAvg(metric.countOfUsesPerDayAvg, counter.days);
 };
 
 export class GMeter implements IMeter {
     private readonly metrics: Metrics;
     private _state: EState;
-    private readonly perSecondTimer: GInterval;
-    private readonly perMinuteTimer: GInterval;
-    private readonly perHourTimer: GInterval;
-    private readonly perDayTimer: GInterval;
+    private readonly perSecond: GInterval;
+    private readonly perMinute: GInterval;
+    private readonly perHour: GInterval;
+    private readonly perDay: GInterval;
 
     constructor() {
         this.metrics = {};
         this._state = EState.STOPPED;
 
-        this.perSecondTimer = new GInterval();
-        this.perSecondTimer.setInterval(1000);
+        this.perSecond = new GInterval();
+        this.perSecond.setInterval(1000);
 
-        this.perMinuteTimer = new GInterval();
-        this.perMinuteTimer.setInterval(60 * 1000);
+        this.perMinute = new GInterval();
+        this.perMinute.setInterval(60 * 1000);
 
-        this.perHourTimer = new GInterval();
-        this.perHourTimer.setInterval(60 * 60 * 1000);
+        this.perHour = new GInterval();
+        this.perHour.setInterval(60 * 60 * 1000);
 
-        this.perDayTimer = new GInterval();
-        this.perDayTimer.setInterval(24 * 60 * 60 * 1000);
+        this.perDay = new GInterval();
+        this.perDay.setInterval(24 * 60 * 60 * 1000);
     }
 
     start(): Status {
-        if (this.isDestroyed()) return getNegativeStatus(ERROR.INSTANCE_DESTROYED);
-        if (this._state === EState.STARTED) return getNegativeStatus(EState.STARTED);
+        if (this.isDestroyed()) return getNegative(ERROR.INSTANCE_DESTROYED);
+        if (this._state === EState.STARTED) return getNegative(EState.STARTED);
 
-        this.perSecondTimer.start();
-        this.perMinuteTimer.start();
-        this.perHourTimer.start();
-        this.perDayTimer.start();
+        this.perSecond.start();
+        this.perMinute.start();
+        this.perHour.start();
+        this.perDay.start();
 
         this._state = EState.STARTED;
-        return getPositiveStatus(EState.STARTED);
+        return getPositive(EState.STARTED);
     }
 
     stop(): Status {
-        if (this.isDestroyed()) return getNegativeStatus(ERROR.INSTANCE_DESTROYED);
+        if (this.isDestroyed()) return getNegative(ERROR.INSTANCE_DESTROYED);
 
-        this.perSecondTimer.stop();
-        this.perMinuteTimer.stop();
-        this.perHourTimer.stop();
-        this.perDayTimer.stop();
+        this.perSecond.stop();
+        this.perMinute.stop();
+        this.perHour.stop();
+        this.perDay.stop();
 
         for (const metricsKey in this.metrics) {
             const metric = this.metrics[metricsKey];
@@ -91,22 +91,22 @@ export class GMeter implements IMeter {
         }
 
         this._state = EState.STOPPED;
-        return getPositiveStatus(EState.STOPPED);
+        return getPositive(EState.STOPPED);
     }
 
     destroy(): Status {
-        if (this.isDestroyed()) return getNegativeStatus(ERROR.INSTANCE_DESTROYED);
+        if (this.isDestroyed()) return getNegative(ERROR.INSTANCE_DESTROYED);
 
         this.stop();
         this.clearFunc();
 
-        this.perSecondTimer.destroy();
-        this.perMinuteTimer.destroy();
-        this.perHourTimer.destroy();
-        this.perDayTimer.destroy();
+        this.perSecond.destroy();
+        this.perMinute.destroy();
+        this.perHour.destroy();
+        this.perDay.destroy();
 
         this._state = EState.DESTROYED;
-        return getPositiveStatus(EState.DESTROYED);
+        return getPositive(EState.DESTROYED);
     }
 
     isDestroyed(): boolean {
@@ -114,7 +114,7 @@ export class GMeter implements IMeter {
     }
 
     deleteFunc(funcName: string): Status {
-        if (this.isDestroyed()) return getNegativeStatus(ERROR.INSTANCE_DESTROYED);
+        if (this.isDestroyed()) return getNegative(ERROR.INSTANCE_DESTROYED);
 
         if (funcName in this.metrics) {
             const metric = this.metrics[funcName];
@@ -122,10 +122,10 @@ export class GMeter implements IMeter {
             // @ts-ignore
             metric._deleteObj = null
             delete this.metrics[funcName];
-            return getPositiveStatus(EState.DELETED);
+            return getPositive(EState.DELETED);
         }
 
-        return getNegativeStatus(ERROR.NAME_IS_NOT_PRESENT);
+        return getNegative(ERROR.NAME_IS_NOT_PRESENT);
     }
 
     private clearFunc(): void {
@@ -235,7 +235,7 @@ export class GMeter implements IMeter {
     private addTimers(deleteObj: { isDeleted: boolean }, metric: IMeterData) {
         const counter = metric._counter;
 
-        this.addTimer(deleteObj, this.perSecondTimer, () => {
+        this.addTimer(deleteObj, this.perSecond, () => {
             updateMetricsPerSecond(metric);
             updateMetricsPerPerMinute(metric);
             updateMetricsPerHour(metric);
@@ -243,20 +243,20 @@ export class GMeter implements IMeter {
             counter.seconds = 0;
         });
 
-        this.addTimer(deleteObj, this.perMinuteTimer, () => {
+        this.addTimer(deleteObj, this.perMinute, () => {
             updateMetricsPerPerMinute(metric);
             updateMetricsPerHour(metric);
             updateMetricsPerDay(metric);
             counter.minutes = 0;
         });
 
-        this.addTimer(deleteObj, this.perHourTimer, () => {
+        this.addTimer(deleteObj, this.perHour, () => {
             updateMetricsPerHour(metric);
             updateMetricsPerDay(metric);
             counter.hours = 0;
         });
 
-        this.addTimer(deleteObj, this.perDayTimer, () => {
+        this.addTimer(deleteObj, this.perDay, () => {
             updateMetricsPerDay(metric);
             counter.days = 0;
         });

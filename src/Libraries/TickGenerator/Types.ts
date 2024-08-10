@@ -36,14 +36,6 @@ export type IRequestAnimationFrame = {
     setDefault(): Status;
 };
 
-export type ITickCounter = ILifeCircle & {
-    getTicksPerPeriod(): number;
-    getTicksSum(): number;
-    setPeriod(period: number): Status;
-    resetPeriod(): Status;
-    subscribe(callback: ICallback<number>): ISubscriptionLike | undefined;
-};
-
 export type IUserMeterData = {
     countOfUses: number;
     countOfErrors: number;

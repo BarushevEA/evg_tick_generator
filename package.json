@@ -33,7 +33,7 @@
     "sinon": "^17.0.1"
   },
   "dependencies": {
-    "evg_observable": "^2.14.58"
+    "evg_observable": "^2.14.60"
   },
   "keywords": [
     "requestAnimationFrame",
